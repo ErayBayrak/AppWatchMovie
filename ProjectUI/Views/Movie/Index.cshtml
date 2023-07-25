@@ -1,0 +1,71 @@
+﻿@model List<ApiMovieViewModel>
+@{
+    ViewData["Title"] = "Index";
+    Layout = null;
+}
+
+<link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Movies</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" href="~/moviehunter/css/style.css" type="text/css" media="all" />
+    <script type="text/javascript" src="js/jquery-1.4.2.min.js"></script>
+    <script type="text/javascript" src="js/jquery-func.js"></script>
+    <!--[if IE 6]><link rel="stylesheet" href="css/ie6.css" type="text/css" media="all" /><![endif]-->
+</head>
+<body>
+    <!-- START PAGE SOURCE -->
+    <div id="shell">
+        <div id="header">
+            <h1 id="logo"><a href="#">Movies</a></h1>
+         
+            <div id="navigation">
+                <ul>
+                    <li><a class="active" href="#">HOME</a></li>
+                    <li><a href="#">NEWS</a></li>
+                    <li><a href="#">IN THEATERS</a></li>
+                    <li><a href="#">COMING SOON</a></li>
+                    <li><a href="#">CONTACT</a></li>
+                    <li><a href="#">ADVERTISE</a></li>
+                </ul>
+            </div>
+            <div id="sub-navigation">
+                <ul>
+                    <li><a href="#">SHOW ALL</a></li>
+                    <li><a href="#">LATEST TRAILERS</a></li>
+                    <li><a href="#">TOP RATED</a></li>
+                    <li><a href="#">MOST COMMENTED</a></li>
+                </ul>
+              
+            </div>
+        </div>
+        <div id="main">
+            <div id="content">
+                <div class="box">
+                    <div class="head">
+                        <h2>MOVIES</h2><br />
+                    </div>
+                    @foreach (var item in Model)
+                    {
+                            <div class="movie">
+                        <div class="movie-image"> <span class="play"><span class="name">@item.title</span></span> <a href="#"><img src="@item.thumbnail" alt="" /></a> </div>
+                        <div class="rating">
+                            <p> @(item.title.Length > 25 ? item.title.Substring(0, item.title.Substring(0,25).LastIndexOf(" "))+".." : item.title)</p>
+                          
+                            
+                        </div>
+                    </div>
+                    }
+                
+                   
+             
+                    <div class="cl">&nbsp;</div>
+                </div>
+  
+    </div></div></div>
+    <!-- END PAGE SOURCE -->
+</body>
+</html>
