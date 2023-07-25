@@ -1,4 +1,6 @@
 
+using DataAccess.Abstract;
+using DataAccess.Concrete.EntityFramework;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
@@ -28,6 +30,7 @@ options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenVali
 	IssuerSigningKey=key
 }
 );
+builder.Services.AddScoped<IUserDal, EfUserDal>();
 
 var app = builder.Build();
 

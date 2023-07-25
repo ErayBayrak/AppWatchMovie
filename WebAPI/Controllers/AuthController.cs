@@ -1,4 +1,5 @@
-﻿using Entities.Concrete;
+﻿using DataAccess.Abstract;
+using Entities.Concrete;
 using Entities.DTOs;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -15,23 +16,30 @@ namespace WebAPI.Controllers
     {
         public static User user = new User();
         private readonly IConfiguration _configuration;
+		private readonly IUserDal _userDal;
 
-        public AuthController(IConfiguration configuration)
+		public AuthController(IConfiguration configuration,IUserDal userDal)
         {
             _configuration = configuration;
-        }
+			_userDal = userDal;
+		}
 
         [HttpPost("register")]
         public async Task<ActionResult<User>> Register(UserDto request)
         {
             CreatePasswordHash(request.Password,out byte[] passwordHash, out byte[] passwordSalt);
-            
-            user.Email = request.Email;
-            user.PasswordHash = passwordHash;
-            user.PasswordSalt = passwordSalt;
-            user.FirstName=request.FirstName;
-            user.LastName=request.LastName; 
 
+            var user = new User
+            {
+                Email = request.Email,
+                FirstName = request.FirstName,
+                LastName = request.LastName,
+                PasswordHash = passwordHash,
+                PasswordSalt = passwordSalt,
+                Status = true
+            };
+
+            _userDal.Add(user);
             return Ok(user);
         }
 
