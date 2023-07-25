@@ -29,6 +29,8 @@ namespace WebAPI.Controllers
             user.Email = request.Email;
             user.PasswordHash = passwordHash;
             user.PasswordSalt = passwordSalt;
+            user.FirstName=request.FirstName;
+            user.LastName=request.LastName; 
 
             return Ok(user);
         }
