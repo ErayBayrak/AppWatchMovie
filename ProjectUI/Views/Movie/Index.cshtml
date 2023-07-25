@@ -51,7 +51,7 @@
                     @foreach (var item in Model)
                     {
                             <div class="movie">
-                        <div class="movie-image"> <span class="play"><span class="name">@item.title</span></span> <a href="#"><img src="@item.thumbnail" alt="" /></a> </div>
+                        <div class="movie-image"> <span class="play"><span class="name">@item.title</span></span> <a href="/Movie/GetMovie/@item.id"><img src="@item.thumbnail" alt="" /></a> </div>
                         <div class="rating">
                             <p> @(item.title.Length > 25 ? item.title.Substring(0, item.title.Substring(0,25).LastIndexOf(" "))+".." : item.title)</p>
                           
