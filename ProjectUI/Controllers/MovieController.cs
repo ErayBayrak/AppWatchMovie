@@ -6,50 +6,27 @@ namespace ProjectUI.Controllers
 {
     public class MovieController : Controller
     {
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string title,string year)
         {
             List<ApiMovieViewModel> apiMovieViewModels = new List<ApiMovieViewModel>();
             var client = new HttpClient();
             var request = new HttpRequestMessage
             {
                 Method = HttpMethod.Get,
-                RequestUri = new Uri("https://imdb-top-100-movies.p.rapidapi.com/"),
-                Headers =
-    {
-        { "X-RapidAPI-Key", "8aeece6e7emshddc8f9b9159764dp18957fjsne809f1fcc81d" },
-        { "X-RapidAPI-Host", "imdb-top-100-movies.p.rapidapi.com" },
-    },
+                RequestUri = new Uri($"http://www.omdbapi.com/?apikey=469058fb&s=shrek&y=2010"),
             };
             using (var response = await client.SendAsync(request))
             {
                 response.EnsureSuccessStatusCode();
                 var body = await response.Content.ReadAsStringAsync();
-                apiMovieViewModels = JsonConvert.DeserializeObject<List<ApiMovieViewModel>>(body);
-                return View(apiMovieViewModels);
-            }
-        }
-        public async Task<IActionResult> GetMovie(string topNumber)
-        {
-            ApiMovieViewModel model = new ApiMovieViewModel();
-            var client = new HttpClient();
-            var request = new HttpRequestMessage
-            {
-                Method = HttpMethod.Get,
-                RequestUri = new Uri($"https://imdb-top-100-movies.p.rapidapi.com/top1"),
-                Headers =
-    {
-        { "X-RapidAPI-Key", "8aeece6e7emshddc8f9b9159764dp18957fjsne809f1fcc81d" },
-        { "X-RapidAPI-Host", "imdb-top-100-movies.p.rapidapi.com" },
-    },
-            };
-            using (var response = await client.SendAsync(request))
-            {
-                response.EnsureSuccessStatusCode();
-                var body = await response.Content.ReadAsStringAsync();
-                model = JsonConvert.DeserializeObject<ApiMovieViewModel>(body);
-                return View(model);
-            }
+                var apiResponse = JsonConvert.DeserializeObject<OmdbApiResponseModel>(body);
+                apiMovieViewModels = apiResponse.Search;
+                return View(apiMovieViewModels.Take(1).ToList());
 
+                //apiMovieViewModels = JsonConvert.DeserializeObject<List<ApiMovieViewModel>>(body);
+                //return View(apiMovieViewModels[0]);
+            }
         }
+  
     }
 }

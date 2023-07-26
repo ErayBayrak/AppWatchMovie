@@ -1,4 +1,5 @@
-﻿using DataAccess.Abstract;
+﻿using Business.Abstract;
+using DataAccess.Abstract;
 using Entities.Concrete;
 using Entities.DTOs;
 using Microsoft.AspNetCore.Http;
@@ -16,87 +17,81 @@ namespace WebAPI.Controllers
     {
         public static User user = new User();
         private readonly IConfiguration _configuration;
-		private readonly IUserDal _userDal;
+		private readonly IAuthService _authService;
 
-		public AuthController(IConfiguration configuration,IUserDal userDal)
+		public AuthController(IConfiguration configuration,IAuthService authService)
         {
             _configuration = configuration;
-			_userDal = userDal;
+			_authService = authService;
 		}
 
         [HttpPost("register")]
-        public async Task<ActionResult<User>> Register(UserDto request)
+        public async Task<ActionResult<User>> Register(UserForRegisterDto request)
         {
-            CreatePasswordHash(request.Password,out byte[] passwordHash, out byte[] passwordSalt);
-
-            var user = new User
-            {
-                Email = request.Email,
-                FirstName = request.FirstName,
-                LastName = request.LastName,
-                PasswordHash = passwordHash,
-                PasswordSalt = passwordSalt,
-                Status = true
-            };
-
-            _userDal.Add(user);
-            return Ok(user);
+			var registerResult = _authService.Register(request);
+			return Ok(registerResult);
         }
 
         [HttpPost("login")]
-        public async Task<ActionResult<string>> Login(UserDto request)
+        public async Task<ActionResult<string>> Login(UserForLoginDto request)
         {
-            if(user.Email!=request.Email)
-            {
-                return BadRequest("User not found.");
-            }
+			var userToLogin = _authService.Login(request);
 
-            if (!VerifyPasswordHash(request.Password, user.PasswordHash, user.PasswordSalt))
-            {
-                return BadRequest("Wrong password.");
-            }
-
-            string token = CreateToken(user);
+			string token = CreateToken(userToLogin);
             return Ok(token);
         }
+		private string CreateToken(User user)
+		{
+			var tokenCon = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer", "");
+			List<Claim> claims = new List<Claim>
+			{
+				new Claim(ClaimTypes.Name,user.Email)
+			};
 
-        private string CreateToken(User user)
-        {
-            List<Claim> claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.Name,user.Email)
-            };
+			var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(_configuration.GetSection("AppSettings:Token").Value));
 
-            var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(_configuration.GetSection("AppSettings:Token").Value));
+			var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
 
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
+			var token = new JwtSecurityToken(
+				issuer:"eray@gmail.com",
+				audience: "eray@gmail.com",
+                claims: claims,
+				expires: DateTime.Now.AddDays(1),
+				notBefore:DateTime.Now,
+				signingCredentials: creds
+				);
 
-            var token = new JwtSecurityToken(
-                claims:claims,
-                expires:DateTime.Now.AddDays(1),
-                signingCredentials:creds
-                );
 
-            var jwt = new JwtSecurityTokenHandler().WriteToken(token);
+			var jwt = new JwtSecurityTokenHandler().WriteToken(token);
 
-            return jwt;
-        }
+			return jwt;
+		}
+		[HttpGet]
+		public bool ValidateToken(string token)
+		{
+			var securityKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(_configuration.GetSection("AppSettings:Token").Value));
+			try
+			{
+				JwtSecurityTokenHandler handler = new();
+				handler.ValidateToken(token, new TokenValidationParameters()
+				{
+					ValidateIssuerSigningKey = true,
+					IssuerSigningKey = securityKey,
+					ValidateLifetime = true,
+					ValidateAudience = false,
+					ValidateIssuer = false,
+				}, out SecurityToken validatedToken
+				);
+				var jwtToken = (JwtSecurityToken)validatedToken;
+				var claims = jwtToken.Claims.ToList();
+				return true;
+			}
+			catch (Exception)
+			{
 
-        private void CreatePasswordHash(string password,out byte[] passwordHash,out byte[] passwordSalt)
-        {
-            using(var hmac = new HMACSHA512())
-            {
-                passwordSalt = hmac.Key;
-                passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
-            }
-        }
-        private bool VerifyPasswordHash(string password, byte[] passwordHash, byte[] passwordSalt)
-        {
-            using (var hmac = new HMACSHA512(user.PasswordSalt))
-            {
-                var computedHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
-                return computedHash.SequenceEqual(passwordHash);
-            }
-        }
-    }
+				return false;
+			}
+		}
+
+	}
 }

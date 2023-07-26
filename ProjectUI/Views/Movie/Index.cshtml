@@ -1,4 +1,4 @@
-﻿@model List<ApiMovieViewModel>
+﻿@*@model List<ApiMovieViewModel>
 @{
     ViewData["Title"] = "Index";
     Layout = null;
@@ -67,5 +67,41 @@
   
     </div></div></div>
     <!-- END PAGE SOURCE -->
+</body>
+</html>
+*@
+@*@model List<ProjectUI.Models.ApiMovieViewModel>
+<link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+<div class="container">
+    @using (Html.BeginForm("Index", "Movie", FormMethod.Post))
+    {
+        <label>Film adını giriniz</label>
+        <input type="text" class="form-control" name="Title" />
+        <br />
+        <label>Film yılını giriniz</label>
+        <input type="text" class="form-control" name="Year" />
+        <br />
+        <button class="btn btn-primary">Film Bilgileri</button>
+    }
+    <table class="table table-ordered">
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Title</td>
+            </tr>
+        }
+    </table>
+</div>*@
+
+@model string
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Movie Title</title>
+</head>
+<body>
+    <h1>Movie Title</h1>
+    <p>@Model</p>
 </body>
 </html>

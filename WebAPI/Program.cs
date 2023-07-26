@@ -1,4 +1,6 @@
 
+using Business.Abstract;
+using Business.Concrete;
 using DataAccess.Abstract;
 using DataAccess.Concrete.EntityFramework;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -16,10 +18,10 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-SecurityKey key = new SymmetricSecurityKey(System.Text.Encoding.ASCII.GetBytes("password"));
+SecurityKey key = new SymmetricSecurityKey(System.Text.Encoding.ASCII.GetBytes("my top secret key"));
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
-options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+options.TokenValidationParameters = new TokenValidationParameters
 {
 	ValidateIssuer = true,
 	ValidateAudience = true,
@@ -31,6 +33,8 @@ options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenVali
 }
 );
 builder.Services.AddScoped<IUserDal, EfUserDal>();
+builder.Services.AddScoped<IUserService, UserManager>();
+builder.Services.AddScoped<IAuthService, AuthManager>();
 
 var app = builder.Build();
 
@@ -40,9 +44,9 @@ if (app.Environment.IsDevelopment())
 	app.UseSwagger();
 	app.UseSwaggerUI();
 }
-app.UseAuthentication();
-app.UseHttpsRedirection();
 
+app.UseHttpsRedirection();
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

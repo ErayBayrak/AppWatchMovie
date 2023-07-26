@@ -41,5 +41,10 @@ namespace Business.Concrete
         {
             _userDal.Update(user);
         }
-    }
+		public User GetByMail(string email)
+		{
+			var values = _userDal.Get(u => u.Email == email);
+			return values;
+		}
+	}
 }
