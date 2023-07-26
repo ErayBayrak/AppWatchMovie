@@ -93,15 +93,44 @@
     </table>
 </div>*@
 
-@model string
+
+@model List<ProjectUI.Models.ApiMovieViewModel>
 
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Movie Title</title>
+    <title>Movies</title>
 </head>
 <body>
-    <h1>Movie Title</h1>
-    <p>@Model</p>
+    <h1>Movies</h1>
+    <form asp-controller="Movie" asp-action="Index" method="get">
+        <label for="title">Movie Title:</label>
+        <input type="text" name="title" id="title" />
+        <label for="year">Year:</label>
+        <input type="text" name="year" id="year" />
+        <button type="submit">Search</button>
+    </form>
+
+    <hr />
+
+    <table>
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Year</th>
+                <th>Type</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var movie in Model)
+            {
+                <tr>
+                    <td>@movie.Title</td>
+                    <td>@movie.Year</td>
+                    <td>@movie.Type</td>
+                </tr>
+            }
+        </tbody>
+    </table>
 </body>
 </html>
