@@ -4,63 +4,75 @@ using Entities.DTOs;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Http.Headers;
+using System.Text;
+using System.Text.Json;
 
 namespace ProjectUI.Controllers
 {
     public class LoginController : Controller
     {
-       private readonly IAuthService _authService;
-        public LoginController(IAuthService authService)
-        {
-            _authService = authService;
-        }
-        public IActionResult Index()
-        {
+        private readonly IConfiguration _configuration;
+        private readonly HttpClient _httpClient;
 
+        public LoginController(IConfiguration configuration)
+        {
+            _configuration = configuration;
+
+            // HttpClient kullanarak Web API'ları tüketmek için bir istemci oluşturuyoruz.
+            _httpClient = new HttpClient();
+            _httpClient.BaseAddress = new Uri("https://localhost:44394/api/Auth"); // AuthController'ın bulunduğu URL'yi girin.
+            _httpClient.DefaultRequestHeaders.Accept.Clear();
+            _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        }
+
+        [HttpGet]
+        public IActionResult Login()
+        {
             return View();
         }
-    
 
         [HttpPost]
-        public async Task<ActionResult> Login(UserForLoginDto dto)
+        public async Task<IActionResult> Login(UserForLoginDto model)
         {
-            if (ModelState.IsValid)
+            var content = new StringContent(JsonSerializer.Serialize(model), Encoding.UTF8, "application/json");
+            var response = await _httpClient.PostAsync("Auth/login", content);
+
+            if (response.IsSuccessStatusCode)
             {
-                using (var client = new HttpClient())
-                {
-                    client.BaseAddress = new Uri("https://your-web-api-url.com/"); // Web API URL
-                    client.DefaultRequestHeaders.Accept.Clear();
-                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-                    // Örnek olarak, kullanıcı adı ve şifreyi modelden alıp Web API'ye post edelim
-                    HttpResponseMessage response = await client.PostAsJsonAsync("api/auth/login", dto);
-
-                    if (response.IsSuccessStatusCode)
-                    {
-                        // Web API'den dönen JWT'yi alalım
-                        var token = await response.Content.ReadAsAsync<string>();
-
-                        
-                        HttpContext.Session.SetString("AccessToken", token);
-                       
-
-                        return RedirectToAction("Index", "Home"); 
-                    }
-                    else
-                    {
-                        // Giriş başarısız
-                        ModelState.AddModelError("", "Geçersiz kullanıcı adı veya şifre.");
-                    }
-                }
+                var token = await response.Content.ReadAsStringAsync();
+                // Token'i Cookie ya da Session'a ekleyerek kullanıcının oturum açtığını belirleyebilirsiniz.
+                // Örnek olarak, Cookie kullanımı:
+                HttpContext.Response.Cookies.Append("access_token", token, new CookieOptions { HttpOnly = true });
+                return RedirectToAction("Index", "Home");
             }
-
-            // Hata durumunda ya da ilk giriş sayfasında kal
-            return View("Index", dto);
+            else
+            {
+                ModelState.AddModelError(string.Empty, "Invalid email or password.");
+                return View();
+            }
         }
 
+        [HttpGet]
         public IActionResult Register()
         {
             return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Register(UserForRegisterDto model)
+        {
+            var content = new StringContent(JsonSerializer.Serialize(model), Encoding.UTF8, "application/json");
+            var response = await _httpClient.PostAsync("Auth/register", content);
+
+            if (response.IsSuccessStatusCode)
+            {
+                return RedirectToAction("Login");
+            }
+            else
+            {
+                ModelState.AddModelError(string.Empty, "User registration failed.");
+                return View();
+            }
         }
     }
 }
