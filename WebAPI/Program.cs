@@ -18,7 +18,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-SecurityKey key = new SymmetricSecurityKey(System.Text.Encoding.ASCII.GetBytes("my top secret key"));
+string tokenKey = builder.Configuration.GetSection("AppSettings:Token").Value;
+SecurityKey key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(tokenKey));
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
 options.TokenValidationParameters = new TokenValidationParameters
@@ -26,8 +27,8 @@ options.TokenValidationParameters = new TokenValidationParameters
 	ValidateIssuer = true,
 	ValidateAudience = true,
 	ValidateLifetime = true,
-	ValidIssuer = "eray@eray.com",
-	ValidAudience = "eray@eray.com",
+	ValidIssuer = "https://localhost:44394",
+	ValidAudience = "https://localhost:44394",
 	ValidateIssuerSigningKey = true,
 	IssuerSigningKey=key
 }

@@ -42,10 +42,10 @@ namespace WebAPI.Controllers
         }
 		private string CreateToken(User user)
 		{
-			var tokenCon = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer", "");
+			//var tokenCon = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer", "");
 			List<Claim> claims = new List<Claim>
 			{
-				new Claim(ClaimTypes.Name,user.Email)
+				new Claim(JwtRegisteredClaimNames.Email,user.Email)
 			};
 
 			var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(_configuration.GetSection("AppSettings:Token").Value));
@@ -53,11 +53,11 @@ namespace WebAPI.Controllers
 			var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
 
 			var token = new JwtSecurityToken(
-				issuer:"eray@gmail.com",
-				audience: "eray@gmail.com",
-                claims: claims,
+				issuer: "https://localhost:44394",
+				audience: "https://localhost:44394",
+						 claims: claims,
 				expires: DateTime.Now.AddDays(1),
-				notBefore:DateTime.Now,
+				notBefore: DateTime.Now,
 				signingCredentials: creds
 				);
 
@@ -65,6 +65,18 @@ namespace WebAPI.Controllers
 			var jwt = new JwtSecurityTokenHandler().WriteToken(token);
 
 			return jwt;
+
+			//var tokenDescriptor = new SecurityTokenDescriptor
+			//{
+			//    Subject = new ClaimsIdentity(claims),
+			//    Expires = DateTime.UtcNow.AddDays(1), // Token süresi 1 gün (istediğiniz süreyi ayarlayabilirsiniz)
+			//    SigningCredentials = creds
+			//};
+
+			//var tokenHandler = new JwtSecurityTokenHandler();
+			//var token = tokenHandler.CreateToken(tokenDescriptor);
+
+			//return tokenHandler.WriteToken(token);
 		}
 		[HttpGet]
 		public bool ValidateToken(string token)

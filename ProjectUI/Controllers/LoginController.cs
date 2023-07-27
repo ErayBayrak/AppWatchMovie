@@ -19,13 +19,7 @@ namespace ProjectUI.Controllers
 
             return View();
         }
-        //      [HttpPost]
-        //public async Task<IActionResult> Index(User user)
-        //{
-
-        //          //_authService.Login(user);
-        //	return RedirectToAction("Index","Home");
-        //}
+    
 
         [HttpPost]
         public async Task<ActionResult> Login(UserForLoginDto dto)
