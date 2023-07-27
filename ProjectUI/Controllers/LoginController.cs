@@ -4,6 +4,7 @@ using Entities.DTOs;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Http.Headers;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 
@@ -34,6 +35,8 @@ namespace ProjectUI.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(UserForLoginDto model)
         {
+           
+
             var content = new StringContent(JsonSerializer.Serialize(model), Encoding.UTF8, "application/json");
             var response = await _httpClient.PostAsync("Auth/login", content);
 
@@ -61,6 +64,8 @@ namespace ProjectUI.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(UserForRegisterDto model)
         {
+            //model.Password = HashPassword(model.Password);
+
             var content = new StringContent(JsonSerializer.Serialize(model), Encoding.UTF8, "application/json");
             var response = await _httpClient.PostAsync("Auth/register", content);
 
@@ -74,5 +79,16 @@ namespace ProjectUI.Controllers
                 return View();
             }
         }
+
+        //private string HashPassword(string password)
+        //{
+        //    using (var hmac = new HMACSHA512())
+        //    {
+        //        var passwordSalt = hmac.Key;
+        //        var passwordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
+        //        return Convert.ToBase64String(passwordHash);
+        //    }
+        //}
+        
     }
 }
