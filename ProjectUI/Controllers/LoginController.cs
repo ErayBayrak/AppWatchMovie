@@ -1,15 +1,20 @@
 ﻿using Business.Abstract;
 using Entities.Concrete;
 using Entities.DTOs;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http.Headers;
+using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 
 namespace ProjectUI.Controllers
 {
+    [AllowAnonymous]
     public class LoginController : Controller
     {
         private readonly IConfiguration _configuration;
@@ -45,6 +50,17 @@ namespace ProjectUI.Controllers
                 var token = await response.Content.ReadAsStringAsync();
                 // Token'i Cookie ya da Session'a ekleyerek kullanıcının oturum açtığını belirleyebilirsiniz.
                 // Örnek olarak, Cookie kullanımı:
+                var claims = new List<Claim>
+            {
+                new Claim(JwtRegisteredClaimNames.Email, model.Email) // İsteğe bağlı, ekstra bilgileri burada ekleyebilirsiniz
+            };
+
+                var claimsIdentity = new ClaimsIdentity(claims, "Token");
+                var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
+
+                await HttpContext.SignInAsync(claimsPrincipal);
+
+
                 HttpContext.Response.Cookies.Append("access_token", token, new CookieOptions { HttpOnly = true });
                 return RedirectToAction("Index", "Home");
             }
