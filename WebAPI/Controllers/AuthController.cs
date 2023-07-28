@@ -42,10 +42,10 @@ namespace WebAPI.Controllers
         }
 		private string CreateToken(User user)
 		{
-			//var tokenCon = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer", "");
+			
 			List<Claim> claims = new List<Claim>
 			{
-				new Claim(JwtRegisteredClaimNames.Email,user.Email)
+				new Claim(ClaimTypes.Email,user.Email)
 			};
 
 			var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(_configuration.GetSection("AppSettings:Token").Value));

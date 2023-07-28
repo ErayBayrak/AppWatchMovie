@@ -1,4 +1,6 @@
 ﻿using Business.Abstract;
+using DataAccess.Abstract;
+using DataAccess.Concrete.EntityFramework;
 using Entities.Concrete;
 using Entities.DTOs;
 using Microsoft.AspNetCore.Authentication;
@@ -19,8 +21,9 @@ namespace ProjectUI.Controllers
     {
         private readonly IConfiguration _configuration;
         private readonly HttpClient _httpClient;
+        private readonly IUserService _userService;
 
-        public LoginController(IConfiguration configuration)
+        public LoginController(IConfiguration configuration, IUserService userService)
         {
             _configuration = configuration;
 
@@ -29,6 +32,7 @@ namespace ProjectUI.Controllers
             _httpClient.BaseAddress = new Uri("https://localhost:44394/api/Auth"); // AuthController'ın bulunduğu URL'yi girin.
             _httpClient.DefaultRequestHeaders.Accept.Clear();
             _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            _userService = userService;
         }
 
         [HttpGet]
@@ -40,7 +44,7 @@ namespace ProjectUI.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(UserForLoginDto model)
         {
-           
+          
 
             var content = new StringContent(JsonSerializer.Serialize(model), Encoding.UTF8, "application/json");
             var response = await _httpClient.PostAsync("Auth/login", content);
@@ -52,7 +56,7 @@ namespace ProjectUI.Controllers
                 // Örnek olarak, Cookie kullanımı:
                 var claims = new List<Claim>
             {
-                new Claim(JwtRegisteredClaimNames.Email, model.Email) // İsteğe bağlı, ekstra bilgileri burada ekleyebilirsiniz
+                new Claim(ClaimTypes.Email, model.Email),// İsteğe bağlı, ekstra bilgileri burada ekleyebilirsiniz
             };
 
                 var claimsIdentity = new ClaimsIdentity(claims, "Token");
@@ -62,7 +66,13 @@ namespace ProjectUI.Controllers
 
 
                 HttpContext.Response.Cookies.Append("access_token", token, new CookieOptions { HttpOnly = true });
-                return RedirectToAction("Index", "Home");
+
+                var userToCheck = _userService.GetByMail(model.Email);
+
+                HttpContext.Session.SetString("UserMail", userToCheck.Email);
+                HttpContext.Session.SetString("UserFirstName", userToCheck.FirstName);
+                HttpContext.Session.SetString("UserLastName", userToCheck.LastName);
+                return RedirectToAction("Index", "Movie");
             }
             else
             {
@@ -70,7 +80,11 @@ namespace ProjectUI.Controllers
                 return View();
             }
         }
-
+        public User GetByMail(string email)
+        {
+            var values = _userService.Get(u => u.Email == email);
+            return values;
+        }
         [HttpGet]
         public IActionResult Register()
         {

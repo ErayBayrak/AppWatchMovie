@@ -1,10 +1,23 @@
-﻿@model Entities.DTOs.UserForLoginDto
+﻿@model Entities.DTOs.UserDto
+@{
+    Layout = null;
+}
 
 <h2>Login</h2>
 
 @using (Html.BeginForm())
 {
     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.FirstName)
+        @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control" })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.LastName)
+        @Html.TextBoxFor(m => m.LastName, new { @class = "form-control" })
+    </div>
 
     <div class="form-group">
         @Html.LabelFor(m => m.Email)
@@ -19,4 +32,5 @@
     <button type="submit" class="btn btn-primary">Login</button>
 }
 <br />
-<a class="btn btn-primary" href="/Login/Register/">Kayıt Ol</a>
+
+

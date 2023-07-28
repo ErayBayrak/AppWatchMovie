@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using ProjectUI.Models;
 using System.Net.Http.Headers;
 namespace ProjectUI.Controllers
 {
+    [Authorize]
     public class MovieController : Controller
     {
         //public async Task<IActionResult> Index(string title,string year)
@@ -37,6 +39,14 @@ namespace ProjectUI.Controllers
 
         public async Task<IActionResult> Index(string title, string year)
         {
+            
+            var userMail = HttpContext.Session.GetString("UserMail");
+            var userFirstname = HttpContext.Session.GetString("UserFirstName");
+            var userLastname = HttpContext.Session.GetString("UserLastName");
+            ViewBag.mailVal = userMail;
+            ViewBag.firstNameVal = userFirstname;
+            ViewBag.lastNameVal = userLastname;
+
             if (!string.IsNullOrEmpty(title) && !string.IsNullOrEmpty(year))
             {
                 List<ApiMovieViewModel> apiMovieViewModels = new List<ApiMovieViewModel>();

@@ -26,6 +26,7 @@ namespace Business.Concrete
         public User Login(UserForLoginDto request)
 		{
 			var userToCheck = _userService.GetByMail(request.Email);
+			
 			if (userToCheck.Email != request.Email)
 			{
 				throw new Exception("User not found.");
