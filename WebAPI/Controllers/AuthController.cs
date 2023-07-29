@@ -2,6 +2,8 @@
 using DataAccess.Abstract;
 using Entities.Concrete;
 using Entities.DTOs;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -40,6 +42,14 @@ namespace WebAPI.Controllers
 			string token = CreateToken(userToLogin);
             return Ok(token);
         }
+		[HttpPost("logout")]
+		public async Task<IActionResult> LogOut()
+		{
+			await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+			return Ok();
+		}
+
 		private string CreateToken(User user)
 		{
 			
@@ -66,17 +76,6 @@ namespace WebAPI.Controllers
 
 			return jwt;
 
-			//var tokenDescriptor = new SecurityTokenDescriptor
-			//{
-			//    Subject = new ClaimsIdentity(claims),
-			//    Expires = DateTime.UtcNow.AddDays(1), // Token süresi 1 gün (istediğiniz süreyi ayarlayabilirsiniz)
-			//    SigningCredentials = creds
-			//};
-
-			//var tokenHandler = new JwtSecurityTokenHandler();
-			//var token = tokenHandler.CreateToken(tokenDescriptor);
-
-			//return tokenHandler.WriteToken(token);
 		}
 		[HttpGet]
 		public bool ValidateToken(string token)

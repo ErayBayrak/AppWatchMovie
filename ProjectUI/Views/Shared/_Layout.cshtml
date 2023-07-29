@@ -32,14 +32,12 @@
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Profile" asp-action="Index">Profile</a>
                             </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Login" asp-action="LogOut">Logout</a>
+                            </li>
                         }
-                        else
-                        {
-                        // Kullanıcı oturum açmamışsa, oturum açma sayfasına yönlendir
-                            <script>window.location.href = "/Login/Login";</script>
-                        }
-
-
+                       
+                      
                     </ul>
                 </div>
             </div>

@@ -4,6 +4,7 @@ using DataAccess.Concrete.EntityFramework;
 using Entities.Concrete;
 using Entities.DTOs;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -27,9 +28,8 @@ namespace ProjectUI.Controllers
         {
             _configuration = configuration;
 
-            // HttpClient kullanarak Web API'ları tüketmek için bir istemci oluşturuyoruz.
             _httpClient = new HttpClient();
-            _httpClient.BaseAddress = new Uri("https://localhost:44394/api/Auth"); // AuthController'ın bulunduğu URL'yi girin.
+            _httpClient.BaseAddress = new Uri("https://localhost:44394/api/Auth"); 
             _httpClient.DefaultRequestHeaders.Accept.Clear();
             _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             _userService = userService;
@@ -52,18 +52,16 @@ namespace ProjectUI.Controllers
             if (response.IsSuccessStatusCode)
             {
                 var token = await response.Content.ReadAsStringAsync();
-                // Token'i Cookie ya da Session'a ekleyerek kullanıcının oturum açtığını belirleyebilirsiniz.
-                // Örnek olarak, Cookie kullanımı:
+               
                 var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Email, model.Email),// İsteğe bağlı, ekstra bilgileri burada ekleyebilirsiniz
+                new Claim(ClaimTypes.Email, model.Email),
             };
 
                 var claimsIdentity = new ClaimsIdentity(claims, "Token");
                 var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
 
                 await HttpContext.SignInAsync(claimsPrincipal);
-
 
                 HttpContext.Response.Cookies.Append("access_token", token, new CookieOptions { HttpOnly = true });
 
@@ -80,6 +78,30 @@ namespace ProjectUI.Controllers
                 return View();
             }
         }
+
+        [HttpPost]
+        public async Task<IActionResult> LogOut()
+        {
+
+            var response = await _httpClient.PostAsync("Auth/logout", null);
+
+            if (response.IsSuccessStatusCode)
+            {
+                return RedirectToAction("Login", "Login");
+            }
+            else
+            {
+                ModelState.AddModelError(string.Empty, "Logout failed.");
+                return View();
+            }
+            //await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            //return RedirectToAction("Login", "Login");
+
+        }
+
+
+        [HttpPost]
+
         public User GetByMail(string email)
         {
             var values = _userService.Get(u => u.Email == email);
@@ -94,8 +116,7 @@ namespace ProjectUI.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(UserForRegisterDto model)
         {
-            //model.Password = HashPassword(model.Password);
-
+            
             var content = new StringContent(JsonSerializer.Serialize(model), Encoding.UTF8, "application/json");
             var response = await _httpClient.PostAsync("Auth/register", content);
 
@@ -109,16 +130,5 @@ namespace ProjectUI.Controllers
                 return View();
             }
         }
-
-        //private string HashPassword(string password)
-        //{
-        //    using (var hmac = new HMACSHA512())
-        //    {
-        //        var passwordSalt = hmac.Key;
-        //        var passwordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
-        //        return Convert.ToBase64String(passwordHash);
-        //    }
-        //}
-        
     }
 }
