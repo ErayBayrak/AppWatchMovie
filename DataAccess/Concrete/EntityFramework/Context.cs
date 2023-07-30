@@ -15,5 +15,6 @@ namespace DataAccess.Concrete.EntityFramework
             optionsBuilder.UseSqlServer(@"server=(localdb)\MSSQLLocalDB;database=DBMovie;integrated security=true");
         }
         public DbSet<User> Users { get; set; }
+        public DbSet<UserMovie> UserMovies { get; set; }
     }
 }

@@ -1,8 +1,12 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Business.Abstract;
+using Entities.Concrete;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using ProjectUI.Models;
 using System.Net.Http.Headers;
+using System.Security.Claims;
+
 namespace ProjectUI.Controllers
 {
     [Authorize]
@@ -31,10 +35,12 @@ namespace ProjectUI.Controllers
         //}
 
         private readonly HttpClient _client;
+        private readonly IUserMovieService _userMovieService;
 
-        public MovieController()
+        public MovieController(IUserMovieService userMovieService)
         {
             _client = new HttpClient();
+            _userMovieService = userMovieService;
         }
 
         public async Task<IActionResult> Index(string title, string year)
@@ -70,8 +76,23 @@ namespace ProjectUI.Controllers
 
                 return View(apiMovieViewModels);
             }
-           
+
         }
+
+        [HttpPost]
+        public IActionResult Add(UserMovie userMovie)
+        {
+           
+            var userId = HttpContext.Session.GetString("UserId");
+            int.TryParse(userId, out var id);
+            userMovie.UserId = id;
+            
+            _userMovieService.Add(userMovie);
+ 
+            return RedirectToAction("Index","Movie");
+        }
+
 
     }
 }
+

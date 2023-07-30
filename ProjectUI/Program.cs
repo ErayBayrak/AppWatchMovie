@@ -15,6 +15,8 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<IUserDal, EfUserDal>();
 builder.Services.AddScoped<IUserService, UserManager>();
 builder.Services.AddScoped<IAuthService, AuthManager>();
+builder.Services.AddScoped<IUserMovieService, UserMovieManager>();
+builder.Services.AddScoped<IUserMovieDal, EfUserMovieDal>();
 //string tokenKey = builder.Configuration.GetSection("AppSettings:Token").Value;
 //SecurityKey key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(tokenKey));
 

@@ -66,10 +66,12 @@ namespace ProjectUI.Controllers
                 HttpContext.Response.Cookies.Append("access_token", token, new CookieOptions { HttpOnly = true });
 
                 var userToCheck = _userService.GetByMail(model.Email);
+               
 
                 HttpContext.Session.SetString("UserMail", userToCheck.Email);
                 HttpContext.Session.SetString("UserFirstName", userToCheck.FirstName);
                 HttpContext.Session.SetString("UserLastName", userToCheck.LastName);
+                HttpContext.Session.SetString("UserId", userToCheck.Id.ToString());
                 return RedirectToAction("Index", "Movie");
             }
             else
@@ -79,23 +81,24 @@ namespace ProjectUI.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpGet]
         public async Task<IActionResult> LogOut()
         {
 
-            var response = await _httpClient.PostAsync("Auth/logout", null);
+            //var response = await _httpClient.PostAsync("Auth/logout",null);
 
-            if (response.IsSuccessStatusCode)
-            {
-                return RedirectToAction("Login", "Login");
-            }
-            else
-            {
-                ModelState.AddModelError(string.Empty, "Logout failed.");
-                return View();
-            }
-            //await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            //return RedirectToAction("Login", "Login");
+            //if (response.IsSuccessStatusCode)
+            //{
+            //    await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            //    return RedirectToAction("Login", "Login");
+            //}
+            //else
+            //{
+            //    ModelState.AddModelError(string.Empty, "Logout failed.");
+            //    return View();
+            //}
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            return RedirectToAction("Login", "Login");
 
         }
 
