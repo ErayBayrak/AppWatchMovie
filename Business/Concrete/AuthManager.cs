@@ -1,6 +1,7 @@
 ﻿using Business.Abstract;
 using Entities.Concrete;
 using Entities.DTOs;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -56,14 +57,18 @@ namespace Business.Concrete
 			_userService.Add(user);
 			return user;
 		}
-		//todo
-		public void UserExists(string email)
-		{
-			throw new NotImplementedException();
-		}
-		
+        public bool UserExists(string email)
+        {
+            if (_userService.GetByMail(email) != null)
+            {
+                throw new Exception("User already exist.");
+            }
+			return true;
+            
+        }
 
-		private void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
+
+        private void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
 		{
 			using (var hmac = new HMACSHA512())
 			{

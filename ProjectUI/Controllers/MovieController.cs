@@ -44,18 +44,7 @@ namespace ProjectUI.Controllers
             }
             else
             {
-                List<ApiMovieViewModel> apiMovieViewModels = new List<ApiMovieViewModel>();
-                var requestUri = $"http://www.omdbapi.com/?apikey=469058fb&s=shrek&y=2010";
-
-                using (var response = await _client.GetAsync(requestUri))
-                {
-                    response.EnsureSuccessStatusCode();
-                    var body = await response.Content.ReadAsStringAsync();
-                    var apiResponse = JsonConvert.DeserializeObject<OmdbApiResponseModel>(body);
-                    apiMovieViewModels = apiResponse.Search;
-                }
-
-                return View(apiMovieViewModels);
+                return View();
             }
 
         }

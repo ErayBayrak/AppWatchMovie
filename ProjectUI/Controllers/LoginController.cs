@@ -85,18 +85,6 @@ namespace ProjectUI.Controllers
         public async Task<IActionResult> LogOut()
         {
 
-            //var response = await _httpClient.PostAsync("Auth/logout",null);
-
-            //if (response.IsSuccessStatusCode)
-            //{
-            //    await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            //    return RedirectToAction("Login", "Login");
-            //}
-            //else
-            //{
-            //    ModelState.AddModelError(string.Empty, "Logout failed.");
-            //    return View();
-            //}
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return RedirectToAction("Login", "Login");
 

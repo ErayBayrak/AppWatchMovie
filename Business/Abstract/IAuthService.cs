@@ -13,6 +13,6 @@ namespace Business.Abstract
 	{
 		User Register(UserForRegisterDto userForRegisterDto);
 		User Login(UserForLoginDto userForLoginDto);
-		void UserExists(string email);
+		bool UserExists(string email);
 	}
 }

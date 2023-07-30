@@ -30,6 +30,11 @@ namespace WebAPI.Controllers
         [HttpPost("register")]
         public async Task<ActionResult<User>> Register(UserForRegisterDto request)
         {
+			var userExists = _authService.UserExists(request.Email);
+			if (!userExists)
+			{
+                return BadRequest("User already exist");
+            }
 			var registerResult = _authService.Register(request);
 			return Ok(registerResult);
         }
