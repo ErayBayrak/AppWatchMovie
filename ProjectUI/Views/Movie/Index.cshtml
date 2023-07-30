@@ -37,9 +37,7 @@
                         <td>@movie.Title</td>
                         <td>@movie.Year</td>
                         <td>@movie.Type</td>
-                        <td>@movie.ImdbId</td>
-                        @*<td><a class="btn btn-update" href="/Movie/Add?imdbId=@movie.ImdbId">Add Watch List</a></td>*@
-                        @*@Html.ActionLink("Add Movie", "Add", new { id = movie.ImdbId }, new { @class = "btn btn-primary" })*@
+                        <td>@movie.ImdbId</td>                                              
                         <td><a href="javascript:void(0)" class="btn btn-sm btn-primary" onclick="addMovie('@movie.ImdbId','@movie.Title','@movie.Year','@movie.Type')">Add to Watchlist</a></td>
                         <td><a href="javascript:void(0)" class="btn btn-sm btn-success" onclick="addWatchedMovieList('@movie.ImdbId','@movie.Title','@movie.Year','@movie.Type')">Add to Watched List</a></td>
                     </tr>

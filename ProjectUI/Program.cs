@@ -23,6 +23,7 @@ builder.Services.AddScoped<IWatchedMovieService, WatchedMovieManager>();
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(x =>
 {
     x.LoginPath = "/Login/Login/";
+    x.LogoutPath = "/Login/LogOut/";
 });
 builder.Services.AddMvc(config =>
 {
