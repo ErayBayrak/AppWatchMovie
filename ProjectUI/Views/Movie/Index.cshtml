@@ -11,9 +11,9 @@
     <h1>Movies</h1>
     <form asp-controller="Movie" asp-action="Index" method="get">
         <label for="title">Movie Title:</label>
-        <input type="text" name="title" id="title" />
+        <input type="text" name="title" id="title" required />
         <label for="year">Year:</label>
-        <input type="text" name="year" id="year" />
+        <input type="text" name="year" id="year" required />
         <button type="submit">Search</button>
     </form>
 
