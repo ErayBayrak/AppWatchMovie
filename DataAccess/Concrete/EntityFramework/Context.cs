@@ -16,5 +16,6 @@ namespace DataAccess.Concrete.EntityFramework
         }
         public DbSet<User> Users { get; set; }
         public DbSet<UserMovie> UserMovies { get; set; }
+        public DbSet<WatchedMovie> WatchedMovies { get; set; }
     }
 }

@@ -1,5 +1,5 @@
 ﻿@using Entities.Concrete;
-@model List<UserMovie>
+@model List<WatchedMovie>
 
 
 <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
@@ -12,7 +12,7 @@
 </head>
 <body>
     <div class="container">
-        <table class="table table-bordered">
+        <table class="table table-hovered">
             <tr>
                 <th>Title</th>
                 <th>Year</th>
@@ -27,13 +27,13 @@
                     <td>@item.Year</td>
                     <td>@item.Type</td>
                     <td>@item.ImdbId</td>
-                    <td><a href="javascript:void(0)" class="btn btn-sm btn-danger" onclick="removeMovie('@item.ImdbId')">Remove from list</a></td>
+                    <td><a href="javascript:void(0)" class="btn btn-sm btn-danger" onclick="removeWatchedMovie('@item.ImdbId')">Remove from list</a></td>
                 </tr>
             }
         </table>
     </div>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/scripts/removeMovieScript.js"></script>
+    <script src="~/scripts/removeWatchedListScript.js"></script>
 </body>
 </html>

@@ -17,21 +17,8 @@ builder.Services.AddScoped<IUserService, UserManager>();
 builder.Services.AddScoped<IAuthService, AuthManager>();
 builder.Services.AddScoped<IUserMovieService, UserMovieManager>();
 builder.Services.AddScoped<IUserMovieDal, EfUserMovieDal>();
-//string tokenKey = builder.Configuration.GetSection("AppSettings:Token").Value;
-//SecurityKey key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(tokenKey));
-
-//builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
-//options.TokenValidationParameters = new TokenValidationParameters
-//{
-//    ValidateIssuer = true,
-//    ValidateAudience = true,
-//    ValidateLifetime = true,
-//    ValidIssuer = "https://localhost:44394",
-//    ValidAudience = "https://localhost:44394",
-//    ValidateIssuerSigningKey = true,
-//    IssuerSigningKey = key
-//}
-//);
+builder.Services.AddScoped<IWatchedMovieDal, EfWatchedMovieDal>();
+builder.Services.AddScoped<IWatchedMovieService, WatchedMovieManager>();
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(x =>
 {

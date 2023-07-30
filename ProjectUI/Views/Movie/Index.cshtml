@@ -19,7 +19,7 @@
 
     <hr />
 
-    <table>
+    <table class="table table-bordered">
         <thead>
             <tr>
                 <th>Title</th>
@@ -39,6 +39,7 @@
                     @*<td><a class="btn btn-update" href="/Movie/Add?imdbId=@movie.ImdbId">Add Watch List</a></td>*@
                     @*@Html.ActionLink("Add Movie", "Add", new { id = movie.ImdbId }, new { @class = "btn btn-primary" })*@
                     <td><a href="javascript:void(0)" class="btn btn-sm btn-primary" onclick="addMovie('@movie.ImdbId','@movie.Title','@movie.Year','@movie.Type')">Add to Watchlist</a></td>
+                    <td><a href="javascript:void(0)" class="btn btn-sm btn-success" onclick="addWatchedMovieList('@movie.ImdbId','@movie.Title','@movie.Year','@movie.Type')">Add to Watched List</a></td>
                 </tr>
             }
         </tbody>
@@ -46,6 +47,8 @@
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/scripts/movieScript.js"></script>
+    <script src="~/scripts/watchedListScript.js"></script>
+
 
 
 </body>

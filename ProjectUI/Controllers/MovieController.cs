@@ -12,35 +12,16 @@ namespace ProjectUI.Controllers
     [Authorize]
     public class MovieController : Controller
     {
-        //public async Task<IActionResult> Index(string title,string year)
-        //{
-        //    List<ApiMovieViewModel> apiMovieViewModels = new List<ApiMovieViewModel>();
-        //    var client = new HttpClient();
-        //    var request = new HttpRequestMessage
-        //    {
-        //        Method = HttpMethod.Get,
-        //        RequestUri = new Uri($"http://www.omdbapi.com/?apikey=469058fb&s=shrek&y=2010"),
-        //    };
-        //    using (var response = await client.SendAsync(request))
-        //    {
-        //        response.EnsureSuccessStatusCode();
-        //        var body = await response.Content.ReadAsStringAsync();
-        //        var apiResponse = JsonConvert.DeserializeObject<OmdbApiResponseModel>(body);
-        //        apiMovieViewModels = apiResponse.Search;
-        //        return View(apiMovieViewModels.Take(1).ToList());
-
-        //        //apiMovieViewModels = JsonConvert.DeserializeObject<List<ApiMovieViewModel>>(body);
-        //        //return View(apiMovieViewModels[0]);
-        //    }
-        //}
 
         private readonly HttpClient _client;
         private readonly IUserMovieService _userMovieService;
+        private readonly IWatchedMovieService _watchedMovieService;
 
-        public MovieController(IUserMovieService userMovieService)
+        public MovieController(IUserMovieService userMovieService, IWatchedMovieService watchedMovieService)
         {
             _client = new HttpClient();
             _userMovieService = userMovieService;
+            _watchedMovieService = watchedMovieService;
         }
 
         public async Task<IActionResult> Index(string title, string year)
@@ -105,6 +86,36 @@ namespace ProjectUI.Controllers
             var id = HttpContext.Session.GetString("UserId");
             int.TryParse(id, out var numberId);
             _userMovieService.DeleteMovie(imdbId,numberId);
+
+            return RedirectToAction("Index", "Movie");
+        }
+
+        [HttpPost]
+        public IActionResult AddWatchedMovie(WatchedMovie watchedMovie)
+        {
+
+            var userId = HttpContext.Session.GetString("UserId");
+            int.TryParse(userId, out var id);
+            watchedMovie.UserId = id;
+
+            _watchedMovieService.Add(watchedMovie);
+
+            return RedirectToAction("Index", "Movie");
+        }
+        public IActionResult PointWatchedMovie()
+        {
+
+            var userId = HttpContext.Session.GetString("UserId");
+            int.TryParse(userId, out var id);
+            var watchedMovies = _watchedMovieService.GetUserMovies(x => x.UserId == id);
+            return View(watchedMovies);
+        }
+        [HttpPost]
+        public IActionResult RemoveWatchedList(string imdbId)
+        {
+            var id = HttpContext.Session.GetString("UserId");
+            int.TryParse(id, out var numberId);
+            _watchedMovieService.DeleteMovie(imdbId, numberId);
 
             return RedirectToAction("Index", "Movie");
         }

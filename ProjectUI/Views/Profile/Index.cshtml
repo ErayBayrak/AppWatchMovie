@@ -1,9 +1,8 @@
 ﻿@model Entities.DTOs.UserForUpdateDto
-@{
-    Layout = null;
-}
 
-<h2>Profil Güncelle</h2>
+
+<link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+<h2>Update Profile</h2>
 
 @using (Html.BeginForm("Index", "Profile", FormMethod.Post))
 {
