@@ -56,9 +56,16 @@ namespace ProjectUI.Controllers
             var userId = HttpContext.Session.GetString("UserId");
             int.TryParse(userId, out var id);
             userMovie.UserId = id;
+
+            var userMovies = _userMovieService.GetUserMovies(x => x.UserId == id);
+            var existingImdbIds = userMovies.Select(m => m.ImdbId).ToList();
+
             
-            _userMovieService.Add(userMovie);
- 
+            if (!existingImdbIds.Contains(userMovie.ImdbId))
+            {
+                _userMovieService.Add(userMovie);
+            }
+
             return RedirectToAction("Index","Movie");
         }
       public IActionResult WatchedMovie()
