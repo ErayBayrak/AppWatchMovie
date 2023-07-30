@@ -13,9 +13,7 @@
         success: function () {
             // Başarılı yanıt durumunda yapılacaklar
             console.log("İstek başarılı.");
-            setTimeout(function () {
-                window.location.reload();
-            }, 1000);
+            window.location.href = "/Movie/WatchedMovie/";
             // Eğer gerekliyse, dönen yanıt işlenebilir.
         },
         error: function (error) {
