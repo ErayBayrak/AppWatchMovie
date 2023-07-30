@@ -1,0 +1,41 @@
+﻿@using Entities.Concrete;
+@model List<UserMovie>
+@{
+    Layout = null;
+}
+
+<link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>WatchedMovie</title>
+</head>
+<body>
+    <div class="container">
+        <table class="table table-bordered">
+            <tr>
+                <th>Title</th>
+                <th>Year</th>
+                <th>Type</th>
+                <th>ImdbId</th>
+                <th>Remove</th>
+            </tr>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Title</td>
+                    <td>@item.Year</td>
+                    <td>@item.Type</td>
+                    <td>@item.ImdbId</td>
+                    <td><a href="javascript:void(0)" class="btn btn-sm btn-danger" onclick="removeMovie('@item.ImdbId')">Remove from list</a></td>
+                </tr>
+            }
+        </table>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/scripts/removeMovieScript.js"></script>
+</body>
+</html>

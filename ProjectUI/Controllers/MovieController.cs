@@ -91,7 +91,23 @@ namespace ProjectUI.Controllers
  
             return RedirectToAction("Index","Movie");
         }
+      public IActionResult WatchedMovie()
+        {
+            
+            var userId = HttpContext.Session.GetString("UserId");
+            int.TryParse(userId, out var id);
+            var watchedMovies = _userMovieService.GetUserMovies(x=>x.UserId==id);
+            return View(watchedMovies);
+        }
+        [HttpPost]
+        public IActionResult Remove(string imdbId)
+        {
+            var id = HttpContext.Session.GetString("UserId");
+            int.TryParse(id, out var numberId);
+            _userMovieService.DeleteMovie(imdbId,numberId);
 
+            return RedirectToAction("Index", "Movie");
+        }
 
     }
 }

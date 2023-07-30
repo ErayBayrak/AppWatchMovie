@@ -15,5 +15,6 @@ namespace Business.Abstract
         void Update(UserMovie userMovie);
         UserMovie Get(Expression<Func<UserMovie, bool>> filter);
         List<UserMovie> GetUserMovies(Expression<Func<UserMovie, bool>> filter = null);
+        void DeleteMovie(string imdbId, int userId);
     }
 }

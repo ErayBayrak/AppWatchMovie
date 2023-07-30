@@ -11,6 +11,6 @@ namespace DataAccess.Concrete.EntityFramework
 {
     public class EfUserMovieDal : EfEntityRepositoryBase<UserMovie, Context>, IUserMovieDal
     {
-     
+    
     }
 }

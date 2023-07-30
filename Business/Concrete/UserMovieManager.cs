@@ -41,5 +41,11 @@ namespace Business.Concrete
         {
             _userMovieDal.Update(userMovie);
         }
+        public void DeleteMovie(string imdbId,int userId)
+        {
+            var removedMovie = _userMovieDal.Get(x=>x.ImdbId==imdbId && x.UserId==userId);
+            _userMovieDal.Delete(removedMovie);
+        }
+        
     }
 }

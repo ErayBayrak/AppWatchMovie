@@ -13,7 +13,7 @@
         success: function (response) {
             // Başarılı yanıt durumunda yapılacaklar
             console.log("İstek başarılı.");
-            // Eğer gerekliyse, dönen yanıtı işleyebilirsiniz.
+            // Eğer gerekliyse, dönen yanıt işlenebilir.
         },
         error: function (xhr, status, error) {
             // Hata durumunda yapılacaklar
