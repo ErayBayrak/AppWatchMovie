@@ -15,7 +15,8 @@ namespace Business.Abstract
         void Update(User user);
         User Get(Expression<Func<User, bool>> filter);
         List<User> GetUsers(Expression<Func<User, bool>> filter = null);
-        public User GetByMail(string email);
+        User GetByMail(string email);
+
 
 	}
 }
